@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escape Sonoro</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 { margin-bottom: 10px; }
+    #botones {
+      display: grid;
+      grid-template-columns: 80px 80px 80px;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #333;
+      color: white;
+    }
+    button:active {
+      background: #666;
+    }
+    #estado {
+      margin-top: 30px;
+      font-size: 18px;
+      height: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Escape Sonoro</h1>
+  <p>Escucha bien. Usa los botones para moverte sin activar trampas.</p>
+  <div id="botones">
+    <div></div>
+    <button onclick="mover('arriba')">⬆️</button>
+    <div></div>
+    <button onclick="mover('izquierda')">⬅️</button>
+    <button onclick="mover('quieto')">🛑</button>
+    <button onclick="mover('derecha')">➡️</button>
+    <div></div>
+    <button onclick="mover('abajo')">⬇️</button>
+    <div></div>
+  </div>
+  <div id="estado"></div>
+
+  <!-- Sonidos -->
+  <audio id="pasos" src="https://actions.google.com/sounds/v1/human_voices/footsteps_on_wood.ogg" preload="auto"></audio>
+  <audio id="trampa" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+  <audio id="alerta" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+  <audio id="gameover" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
+  <audio id="victoria" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
+
+<script>
+  let estado = document.getElementById("estado");
+  let pasos = document.getElementById("pasos");
+  let trampa = document.getElementById("trampa");
+  let alerta = document.getElementById("alerta");
+  let gameover = document.getElementById("gameover");
+  let victoria = document.getElementById("victoria");
+
+  let posicion = 0;
+  let trampaPos = Math.floor(Math.random() * 9);
+  let salidaPos = 8;
+
+  function mover(direccion) {
+    pasos.play();
+    if (direccion === "arriba") posicion -= 3;
+    else if (direccion === "abajo") posicion += 3;
+    else if (direccion === "izquierda") posicion -= 1;
+    else if (direccion === "derecha") posicion += 1;
+
+    if (posicion < 0) posicion = 0;
+    if (posicion > 8) posicion = 8;
+
+    if (posicion === trampaPos) {
+      trampa.play();
+      estado.textContent = "¡Pisaste una trampa!";
+      gameover.play();
+    } else if (posicion === salidaPos) {
+      victoria.play();
+      estado.textContent = "¡Escapaste con vida!";
+    } else {
+      estado.textContent = "Te estás moviendo...";
+      if (Math.abs(posicion - trampaPos) === 1 || Math.abs(posicion - trampaPos) === 3) {
+        alerta.play(); // advertencia si está cerca de la trampa
+      }
+    }
+  }
+</script>
+</body>
+</html>
